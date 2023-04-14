@@ -26,14 +26,23 @@ const Register = () => {
     const handleSubmit = (event) => {
         // 1. prevent refresh page
         event.preventDefault();
+        setSuccess('');
+        setError('');
         // const form = event.target;
         // console.log(event.target.email.value);
         // console.log(form.password.value);
         // 2. collect from data
         const email = event.target.email.value;
         const password = event.target.password.value;
-        console.log('email:', email);
-        console.log('password:', password);
+        // console.log('email:', email);
+        // console.log('password:', password);
+        // password validation
+        if (!/(?=.*[A-Z])/.test(password)) {
+            setError('Please at least one uppercase letter');
+            return;
+        }
+
+
         // 3. create new user in firebase
         createUserWithEmailAndPassword(auth, email, password)
             .then(result => {
@@ -50,7 +59,7 @@ const Register = () => {
             .catch(error => {
                 // console.error(error);
                 setError(error.message);
-                setSuccess('');
+                // setSuccess('');
         })
     }
     return (
