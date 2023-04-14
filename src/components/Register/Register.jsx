@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './Register.css';
-import { createUserWithEmailAndPassword, getAuth} from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification} from 'firebase/auth';
 import app from '../../firebase/firebase.init';
+import { Link } from 'react-router-dom';
 const Register = () => {
     const auth = getAuth(app);
     // const [email, setEmail] = useState('');
@@ -37,10 +38,10 @@ const Register = () => {
         // console.log('email:', email);
         // console.log('password:', password);
         // password validation
-        if (!/(?=.*[A-Z])/.test(password)) {
-            setError('Please at least one uppercase letter');
-            return;
-        }
+        // if (!/(?=.*[A-Z])/.test(password)) {
+        //     setError('Please at least one uppercase letter');
+        //     return;
+        // }
 
 
         // 3. create new user in firebase
@@ -49,18 +50,27 @@ const Register = () => {
                 const loggedUser = result.user;
                 console.log(loggedUser);
                 setError('');
+                sendVerificationEmail(loggedUser);
 
                 // form
                 const form = event.target;
                 form.reset();
                 setSuccess('User has created Successfully');
-                alert(success)
+                // alert(success)
             })
             .catch(error => {
                 // console.error(error);
                 setError(error.message);
                 // setSuccess('');
         })
+    }
+    const sendVerificationEmail = (user) => {
+        sendEmailVerification(user).then(() => {
+            alert("please verify your email")
+        })
+    }
+    const handleShowPassword = ()=>{
+        
     }
     return (
         <div className='register-form'>
@@ -71,10 +81,15 @@ const Register = () => {
                 <br />
                 <input onBlur={handlePasswordBlur} type="password" name="password" id="password" placeholder='Your Password' required />
                 <br />
-                <p className='text-primary'>{error}</p>
+                <button onClick={handleShowPassword}>show password</button>
+                <br />
                 <input type="submit" value="Register" />
-                
             </form>
+            <p color='text-danger'>{error}</p>
+            <p className='text-success'>{success}</p>
+            <p>Already have an account ? Please
+                <Link to="/login">Login</Link>
+            </p>
         </div>
     );
 };
